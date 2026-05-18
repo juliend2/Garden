@@ -34,7 +34,9 @@ export default function Space() {
   const navigate     = useNavigate()
   const [space, setSpace]   = useState<SpaceType | null>(null)
   const [objects, setObjects] = useState<Obj[]>([])
-  const [json, setJson]     = useState('{}')
+  const [text, setText]     = useState('')
+  const [color, setColor]   = useState('#ffffff')
+  const [url, setUrl]       = useState('')
   const [error, setError]   = useState('')
 
   useEffect(() => {
@@ -46,17 +48,12 @@ export default function Space() {
   async function createObject(e: React.FormEvent) {
     e.preventDefault()
     if (!id) return
-    let data: Record<string, unknown>
     try {
-      data = JSON.parse(json)
-    } catch {
-      setError('Invalid JSON')
-      return
-    }
-    try {
-      const obj = await api.spaces.createObject(id, data)
+      const obj = await api.spaces.createObject(id, { text, color, url })
       setObjects(prev => [obj, ...prev])
-      setJson('{}')
+      setText('')
+      setColor('#ffffff')
+      setUrl('')
       setError('')
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Error')
@@ -80,12 +77,33 @@ export default function Space() {
       <h2>New object</h2>
       {error && <p>{error}</p>}
       <form onSubmit={createObject}>
-        <textarea
-          value={json}
-          onChange={e => setJson(e.target.value)}
-          rows={5}
-          cols={50}
-        />
+        <label>
+          Text
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            rows={5}
+            cols={50}
+          />
+        </label>
+        <br />
+        <label>
+          Color
+          <input
+            type="color"
+            value={color}
+            onChange={e => setColor(e.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          URL
+          <input
+            type="text"
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+          />
+        </label>
         <br />
         <button type="submit">Create</button>
       </form>

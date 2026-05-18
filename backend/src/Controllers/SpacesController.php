@@ -139,11 +139,11 @@ class SpacesController extends BaseController
             return;
         }
 
-        $body = $this->body();
-        unset($body['_id'], $body['spaceId'], $body['userId'], $body['createdAt'], $body['updatedAt']);
+        $fields = $this->validateObjectFields($this->body());
+        if ($fields === null) return;
 
         $now    = new UTCDateTime();
-        $result = $db->objects->insertOne(array_merge($body, [
+        $result = $db->objects->insertOne(array_merge($fields, [
             'spaceId'   => $spaceId,
             'userId'    => new ObjectId($userId),
             'createdAt' => $now,

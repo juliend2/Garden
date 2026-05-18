@@ -6,30 +6,26 @@ export default function ObjectPage() {
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
   const [obj, setObj]     = useState<Obj | null>(null)
-  const [json, setJson]   = useState('')
+  const [text, setText]   = useState('')
+  const [color, setColor] = useState('#ffffff')
+  const [url, setUrl]     = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (!id) return
     api.objects.get(id).then(o => {
       setObj(o)
-      const { _id, spaceId, userId, createdAt, updatedAt, ...fields } = o
-      setJson(JSON.stringify(fields, null, 2))
+      setText(typeof o.text === 'string' ? o.text : '')
+      setColor(typeof o.color === 'string' && o.color ? o.color : '#ffffff')
+      setUrl(typeof o.url === 'string' ? o.url : '')
     })
   }, [id])
 
   async function update(e: React.FormEvent) {
     e.preventDefault()
     if (!id) return
-    let data: Record<string, unknown>
     try {
-      data = JSON.parse(json)
-    } catch {
-      setError('Invalid JSON')
-      return
-    }
-    try {
-      const updated = await api.objects.update(id, data)
+      const updated = await api.objects.update(id, { text, color, url })
       setObj(updated)
       setError('')
     } catch (e: unknown) {
@@ -56,12 +52,33 @@ export default function ObjectPage() {
       <h2>Fields</h2>
       {error && <p>{error}</p>}
       <form onSubmit={update}>
-        <textarea
-          value={json}
-          onChange={e => setJson(e.target.value)}
-          rows={12}
-          cols={50}
-        />
+        <label>
+          Text
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            rows={12}
+            cols={50}
+          />
+        </label>
+        <br />
+        <label>
+          Color
+          <input
+            type="color"
+            value={color}
+            onChange={e => setColor(e.target.value)}
+          />
+        </label>
+        <br />
+        <label>
+          URL
+          <input
+            type="text"
+            value={url}
+            onChange={e => setUrl(e.target.value)}
+          />
+        </label>
         <br />
         <button type="submit">Save</button>
       </form>

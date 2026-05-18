@@ -31,12 +31,12 @@ class ObjectsController extends BaseController
     {
         if (!$userId = $this->requireAuth()) return;
 
-        $body = $this->body();
-        unset($body['_id'], $body['spaceId'], $body['userId'], $body['createdAt'], $body['updatedAt']);
+        $fields = $this->validateObjectFields($this->body());
+        if ($fields === null) return;
 
         $obj = Database::get()->objects->findOneAndUpdate(
             ['_id' => new ObjectId($vars['id']), 'userId' => new ObjectId($userId)],
-            ['$set' => array_merge($body, ['updatedAt' => new UTCDateTime()])],
+            ['$set' => array_merge($fields, ['updatedAt' => new UTCDateTime()])],
             ['returnDocument' => \MongoDB\Operation\FindOneAndUpdate::RETURN_DOCUMENT_AFTER]
         );
 
