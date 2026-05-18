@@ -22,6 +22,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('DELETE', '/api/spaces/{id}',          [SpacesController::class, 'delete']);
     $r->addRoute('GET',    '/api/spaces/{id}/objects',  [SpacesController::class, 'objects']);
     $r->addRoute('POST',   '/api/spaces/{id}/objects',  [SpacesController::class, 'createObject']);
+    $r->addRoute('POST',   '/api/spaces/{id}/objects/reorder', [SpacesController::class, 'reorderObjects']);
 
     $r->addRoute('GET',    '/api/objects/{id}',         [ObjectsController::class, 'show']);
     $r->addRoute('PATCH',  '/api/objects/{id}',         [ObjectsController::class, 'update']);

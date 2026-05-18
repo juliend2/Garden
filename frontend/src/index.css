@@ -34,3 +34,21 @@ body {
 .object--text {
 
 }
+
+.object__handle {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: #666;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 3px;
+  cursor: grab;
+  user-select: none;
+  z-index: 1;
+}
+.object__handle:active {
+  cursor: grabbing;
+}

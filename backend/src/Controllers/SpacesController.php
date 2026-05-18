@@ -120,7 +120,7 @@ class SpacesController extends BaseController
 
         $objects = $db->objects->find(
             ['spaceId' => $spaceId],
-            ['sort' => ['createdAt' => -1]]
+            ['sort' => ['order' => 1, 'createdAt' => -1]]
         );
 
         Response::json(array_map([Serializer::class, 'doc'], iterator_to_array($objects)));
@@ -142,15 +142,63 @@ class SpacesController extends BaseController
         $fields = $this->validateObjectFields($this->body());
         if ($fields === null) return;
 
+        $last = $db->objects->findOne(
+            ['spaceId' => $spaceId],
+            ['sort' => ['order' => -1], 'projection' => ['order' => 1]]
+        );
+        $nextOrder = (isset($last['order']) ? (int) $last['order'] : -1) + 1;
+
         $now    = new UTCDateTime();
         $result = $db->objects->insertOne(array_merge($fields, [
             'spaceId'   => $spaceId,
             'userId'    => new ObjectId($userId),
+            'order'     => $nextOrder,
             'createdAt' => $now,
             'updatedAt' => $now,
         ]));
 
         $object = $db->objects->findOne(['_id' => $result->getInsertedId()]);
         Response::json(Serializer::doc($object), 201);
+    }
+
+    public function reorderObjects(array $vars): void
+    {
+        if (!$userId = $this->requireAuth()) return;
+
+        $db      = Database::get();
+        $spaceId = new ObjectId($vars['id']);
+
+        $space = $db->spaces->findOne(['_id' => $spaceId, 'userId' => new ObjectId($userId)]);
+        if (!$space) {
+            Response::error('Not found', 404);
+            return;
+        }
+
+        $body = $this->body();
+        $ids  = $body['ids'] ?? null;
+        if (!is_array($ids)) {
+            Response::error('ids must be an array');
+            return;
+        }
+
+        $operations = [];
+        foreach ($ids as $index => $id) {
+            if (!is_string($id)) {
+                Response::error('ids must contain strings');
+                return;
+            }
+            $operations[] = [
+                'updateOne' => [
+                    ['_id' => new ObjectId($id), 'spaceId' => $spaceId, 'userId' => new ObjectId($userId)],
+                    ['$set' => ['order' => $index]],
+                ],
+            ];
+        }
+
+        if ($operations) {
+            $db->objects->bulkWrite($operations);
+        }
+
+        Response::json(['ok' => true]);
     }
 }

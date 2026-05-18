@@ -1,5 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { api, type Space as SpaceType, type Obj } from '../api'
 
 interface TextObjectProps {
@@ -9,24 +24,43 @@ interface TextObjectProps {
 }
 
 export function TextObject(props: TextObjectProps) {
-  const styles = {}
-  if ("color" in props) {
+  const styles: React.CSSProperties = {}
+  if (props.color) {
     styles.backgroundColor = props.color
   }
-  console.log('houra', styles)
   return <Link className='object object--text' style={styles} to={`/object/${props.id}`}>{props.text}</Link>
 }
 
-function objectComponentFactory(object) {
-  // TODO: support color-only object
+function objectComponentFactory(object: Obj) {
   if ('text' in object) {
     if ('color' in object) {
-      return <TextObject id={object._id} text={object.text} color={object.color} />
+      return <TextObject id={object._id} text={object.text as string} color={object.color as string} />
     } else {
-      return <TextObject id={object._id} text={object.text} />
+      return <TextObject id={object._id} text={object.text as string} />
     }
   }
   return <></>
+}
+
+function SortableObject({ obj }: { obj: Obj }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: obj._id })
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    position: 'relative',
+  }
+  return (
+    <div ref={setNodeRef} style={style}>
+      <span
+        className="object__handle"
+        {...attributes}
+        {...listeners}
+        aria-label="Drag to reorder"
+      >⋮⋮</span>
+      {objectComponentFactory(obj)}
+    </div>
+  )
 }
 
 export default function Space() {
@@ -39,6 +73,8 @@ export default function Space() {
   const [url, setUrl]       = useState('')
   const [error, setError]   = useState('')
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
+
   useEffect(() => {
     if (!id) return
     api.spaces.get(id).then(setSpace).catch(e => setError(e.message))
@@ -50,7 +86,7 @@ export default function Space() {
     if (!id) return
     try {
       const obj = await api.spaces.createObject(id, { text, color, url })
-      setObjects(prev => [obj, ...prev])
+      setObjects(prev => [...prev, obj])
       setText('')
       setColor('#ffffff')
       setUrl('')
@@ -64,6 +100,23 @@ export default function Space() {
     if (!id || !confirm('Delete this space and all its objects?')) return
     await api.spaces.delete(id)
     navigate('/')
+  }
+
+  async function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!id || !over || active.id === over.id) return
+    const oldIndex = objects.findIndex(o => o._id === active.id)
+    const newIndex = objects.findIndex(o => o._id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+    const previous = objects
+    const next = arrayMove(objects, oldIndex, newIndex)
+    setObjects(next)
+    try {
+      await api.spaces.reorderObjects(id, next.map(o => o._id))
+    } catch (e: unknown) {
+      setObjects(previous)
+      setError(e instanceof Error ? e.message : 'Error')
+    }
   }
 
   if (!space) return null
@@ -109,13 +162,15 @@ export default function Space() {
       </form>
 
       <h2>Objects</h2>
-      <section className="objects">
-        {objects.map(o => (
-          <div key={o._id}>
-            {objectComponentFactory(o)}
-          </div>
-        ))}
-      </section>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={objects.map(o => o._id)} strategy={rectSortingStrategy}>
+          <section className="objects">
+            {objects.map(o => (
+              <SortableObject key={o._id} obj={o} />
+            ))}
+          </section>
+        </SortableContext>
+      </DndContext>
     </div>
   )
 }

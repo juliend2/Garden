@@ -51,6 +51,8 @@ export const api = {
     objects:      (id: string)                          => request<Obj[]>  ('GET',    `/api/spaces/${id}/objects`),
     createObject: (id: string, data: Record<string, unknown>) =>
       request<Obj>('POST', `/api/spaces/${id}/objects`, data),
+    reorderObjects: (id: string, ids: string[]) =>
+      request<{ ok: boolean }>('POST', `/api/spaces/${id}/objects/reorder`, { ids }),
   },
   objects: {
     get:    (id: string)                               => request<Obj>('GET',   `/api/objects/${id}`),
