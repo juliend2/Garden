@@ -1,0 +1,35 @@
+services:
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+
+  php:
+    build: ./backend
+    volumes:
+      - ./backend:/var/www/html
+      - backend_vendor:/var/www/html/vendor
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: objects_app
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_REDIRECT_URI: http://localhost:5173/api/auth/callback
+      FRONTEND_URL: http://localhost:5173
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+      - frontend_nm:/app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - php
+
+volumes:
+  mongo_data:
+  backend_vendor:
+  frontend_nm:
