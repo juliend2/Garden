@@ -1,0 +1,36 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.objects {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 414px) { .objects { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 768px) { .objects { grid-template-columns: 1fr 1fr 1fr; } }
+@media (min-width: 1024px) { .objects { grid-template-columns: 1fr 1fr 1fr 1fr; } }
+@media (min-width: 1280px) { .objects { grid-template-columns: 1fr 1fr 1fr 1fr 1fr; } }
+@media (min-width: 1440px) { .objects { grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; } }
+@media (min-width: 1920px) { .objects { grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; } }
+
+.object {
+  color: #333;
+  display: block;
+  padding: 1rem;
+  aspect-ratio: 1 / 1;
+  box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.13);
+  text-decoration: none;
+}
+.object:hover, .object:active {
+  color: black;
+}
+
+.object--text {
+
+}

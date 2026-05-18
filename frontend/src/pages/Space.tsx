@@ -2,6 +2,33 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api, type Space as SpaceType, type Obj } from '../api'
 
+interface TextObjectProps {
+  id: string;
+  text: string;
+  color?: string;
+}
+
+export function TextObject(props: TextObjectProps) {
+  const styles = {}
+  if ("color" in props) {
+    styles.backgroundColor = props.color
+  }
+  console.log('houra', styles)
+  return <Link className='object object--text' style={styles} to={`/object/${props.id}`}>{props.text}</Link>
+}
+
+function objectComponentFactory(object) {
+  // TODO: support color-only object
+  if ('text' in object) {
+    if ('color' in object) {
+      return <TextObject id={object._id} text={object.text} color={object.color} />
+    } else {
+      return <TextObject id={object._id} text={object.text} />
+    }
+  }
+  return <></>
+}
+
 export default function Space() {
   const { id }       = useParams<{ id: string }>()
   const navigate     = useNavigate()
@@ -60,19 +87,17 @@ export default function Space() {
           cols={50}
         />
         <br />
-        <button type="submit">Create object</button>
+        <button type="submit">Create</button>
       </form>
 
       <h2>Objects</h2>
-      <ul>
+      <section className="objects">
         {objects.map(o => (
-          <li key={o._id}>
-            <Link to={`/object/${o._id}`}>{o._id}</Link>
-            {' — '}
-            {new Date(o.createdAt as string).toLocaleString()}
-          </li>
+          <div key={o._id}>
+            {objectComponentFactory(o)}
+          </div>
         ))}
-      </ul>
+      </section>
     </div>
   )
 }
