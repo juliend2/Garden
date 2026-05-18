@@ -3,6 +3,8 @@ services:
     image: mongo:7
     volumes:
       - mongo_data:/data/db
+    ports:
+      - "27017:27017"
 
   php:
     build: ./backend
