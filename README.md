@@ -33,6 +33,51 @@ docker compose up --build
 
 App is at `http://localhost:5173`.
 
+## Production setup
+
+Requires a VPS with Docker and a remote MongoDB (e.g. MongoDB Atlas).
+
+**1. Install Docker on the VPS:**
+
+```bash
+curl -fsSL https://get.docker.com | sh
+```
+
+**2. Clone the repo and create your `.env`:**
+
+```bash
+cp .env.example .env
+# fill in all values
+```
+
+**3. Create production Dockerfiles** — the frontend uses a multi-stage build (Node → nginx) and nginx proxies `/api/*` to the PHP container. See `frontend/Dockerfile` and `frontend/nginx.conf`.
+
+**4. Start:**
+
+```bash
+docker compose -f docker-compose.production.yml up -d --build
+```
+
+**5. SSL with Caddy** — install Caddy on the host and create `/etc/caddy/Caddyfile`:
+
+```
+yourdomain.com {
+    reverse_proxy localhost:80
+}
+```
+
+```bash
+systemctl enable --now caddy
+```
+
+Caddy provisions and renews Let's Encrypt certificates automatically. In `docker-compose.prod.yml`, bind the port to localhost only (`"127.0.0.1:80:80"`) so it's not exposed directly.
+
+**In Google Cloud Console**, add this as an authorized redirect URI:
+
+```
+https://yourdomain.com/api/auth/callback
+```
+
 ## How it works
 
 - Vite proxies all `/api/*` requests to the PHP container — no CORS needed, session cookies just work
