@@ -141,7 +141,6 @@ export default function Space() {
     <div>
       <Link to="/">← Spaces</Link>
       <h1>{space.name}</h1>
-      <button onClick={deleteSpace}>Delete space</button>
 
       <h2>New object</h2>
       {error && <p>{error}</p>}
@@ -203,6 +202,11 @@ export default function Space() {
           </section>
         </SortableContext>
       </DndContext>
+
+      <div className="danger-zone">
+        <h3>Danger zone</h3>
+        <button onClick={deleteSpace}>Delete space</button>
+      </div>
     </div>
   )
 }
