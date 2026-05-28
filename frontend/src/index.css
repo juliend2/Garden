@@ -18,14 +18,47 @@ body {
   margin-left: 1rem;
 }
 
+.danger-zone {
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: #ccc;
+}
+.danger-zone button {
+  background-color: #ff0000;
+  font-weight: bold;
+  color: white;
+  border: 0px solid red;
+  border-radius: 3px;
+  padding: .5rem;
+}
+.danger-zone button:hover {
+  background: #992c25;
+}
+.danger-zone h3 {
+  margin-top: 0;
+  margin-bottom: .75rem;
+}
+
 .object-form {
   background: #eee;
   padding: 1rem;
+  width: 100%;
 }
-.field-label {
+@media (min-width: 1024px) { 
+  .object-form {
+    width: 50%;
+  }
+}
+.field-label,
+.form-button {
   display: block;
   margin-top: .5rem;
 }
+.inline-block * {
+  display: inline-block;
+  margin-right: .75rem;
+}
+
 .field:first-child > .field-label,
 label:first-child > .field-label {
   margin-top: 0;

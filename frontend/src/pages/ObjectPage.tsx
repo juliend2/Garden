@@ -53,11 +53,7 @@ export default function ObjectPage() {
     <div>
       <Link to={`/space/${obj.spaceId}`}>← Space</Link>
       <h1>Object</h1>
-      <p>ID: {obj._id}</p>
-      <p>Created: {new Date(obj.createdAt as string).toLocaleString()}</p>
-      <p>Updated: {new Date(obj.updatedAt as string).toLocaleString()}</p>
 
-      <h2>Fields</h2>
       {error && <p>{error}</p>}
       <form className='object-form' onSubmit={update}>
         <label>
@@ -104,10 +100,17 @@ export default function ObjectPage() {
             onChange={e => setUrl(e.target.value)}
           />
         </label>
-        <button type="submit" className='form-button' >Save</button>
+        <div className='inline-block'>
+          <button type="submit" className='form-button' >Save</button>
+          <span>or</span>
+          <Link to={`/space/${obj.spaceId}`}>Cancel</Link>
+        </div>
       </form>
 
-      <button onClick={deleteObject}>Delete object</button>
+      <div className="danger-zone">
+        <h3>Danger zone</h3>
+        <button onClick={deleteObject}>Delete object</button>
+      </div>
     </div>
   )
 }
