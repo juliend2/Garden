@@ -65,21 +65,31 @@ label:first-child > .field-label {
 .object--text {
 }
 
-.object__handle {
+.object__tools {
+  float: right;
+  padding: .25rem;
+  /*
   position: absolute;
   top: 0.25rem;
   right: 0.25rem;
+  */
+}
+.object__tool {
+  background: rgba(255, 255, 255, 0.85);
   padding: 0.35rem 0.35rem;
-  font-size: 0.9rem;
+  border-radius: 3px;
   line-height: 1;
   color: #555;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 3px;
+  font-family: courier;
+  font-size: 0.9rem;
+  margin-left: .25rem;
+}
+
+.object__handle {
   cursor: grab;
   user-select: none;
   z-index: 1;
 }
-
 .object__handle:active {
   cursor: grabbing;
 }

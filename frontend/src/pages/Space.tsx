@@ -55,12 +55,18 @@ function SortableObject({ obj }: { obj: Obj }) {
   }
   return (
     <div ref={setNodeRef} style={style}>
-      <span
-        className="object__handle"
-        {...attributes}
-        {...listeners}
-        aria-label="Drag to reorder"
-      >⋮⋮</span>
+      <div className="object__tools">
+        <Link
+          to={`/object/${obj._id}`}
+          className="object__tool  object__edit"
+        >Edit</Link>
+        <span
+          className="object__tool  object__handle"
+          {...attributes}
+          {...listeners}
+          aria-label="Drag to reorder"
+        >⋮⋮⋮</span>
+      </div>
       {objectComponentFactory(obj)}
     </div>
   )
