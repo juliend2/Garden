@@ -129,9 +129,9 @@ export default function Space() {
 
       <h2>New object</h2>
       {error && <p>{error}</p>}
-      <form onSubmit={createObject}>
+      <form className='object-form' onSubmit={createObject}>
         <label>
-          Text
+          <span className='field-label'>Text</span>
           <textarea
             value={text}
             onChange={e => setText(e.target.value)}
@@ -141,7 +141,7 @@ export default function Space() {
         </label>
         <br />
         <label>
-          Color
+          <span className='field-label'>Color</span>
           <input
             type="color"
             value={color}
@@ -150,7 +150,7 @@ export default function Space() {
         </label>
         <br />
         <label>
-          URL
+          <span className='field-label'>URL</span>
           <input
             type="text"
             value={url}
@@ -158,7 +158,7 @@ export default function Space() {
           />
         </label>
         <br />
-        <button type="submit">Create</button>
+        <button type="submit" className='form-button'>Create</button>
       </form>
 
       <h2>Objects</h2>

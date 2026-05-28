@@ -19,18 +19,20 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <nav>
-        <span>{user.name} ({user.email})</span>
-        <button onClick={() => api.auth.logout().then(() => setUser(null))}>
-          Logout
-        </button>
-      </nav>
-      <Routes>
-        <Route path="/"           element={<Spaces />} />
-        <Route path="/space/:id"  element={<Space />} />
-        <Route path="/object/:id" element={<ObjectPage />} />
-        <Route path="*"           element={<Navigate to="/" replace />} />
-      </Routes>
+      <div className="wrapper">
+        <nav className="nav">
+          <span>{user.name} ({user.email})</span>
+          <button className='logout' onClick={() => api.auth.logout().then(() => setUser(null))}>
+            Logout
+          </button>
+        </nav>
+        <Routes>
+          <Route path="/"           element={<Spaces />} />
+          <Route path="/space/:id"  element={<Space />} />
+          <Route path="/object/:id" element={<ObjectPage />} />
+          <Route path="*"           element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   )
 }

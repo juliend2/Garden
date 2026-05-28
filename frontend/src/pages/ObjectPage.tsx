@@ -51,9 +51,9 @@ export default function ObjectPage() {
 
       <h2>Fields</h2>
       {error && <p>{error}</p>}
-      <form onSubmit={update}>
+      <form className='object-form' onSubmit={update}>
         <label>
-          Text
+          <span className='field-label'>Text</span>
           <textarea
             value={text}
             onChange={e => setText(e.target.value)}
@@ -63,7 +63,7 @@ export default function ObjectPage() {
         </label>
         <br />
         <label>
-          Color
+          <span className='field-label'>Color</span>
           <input
             type="color"
             value={color}
@@ -72,7 +72,7 @@ export default function ObjectPage() {
         </label>
         <br />
         <label>
-          URL
+          <span className='field-label'>URL</span>
           <input
             type="text"
             value={url}
@@ -80,7 +80,7 @@ export default function ObjectPage() {
           />
         </label>
         <br />
-        <button type="submit">Save</button>
+        <button type="submit" className='form-button' >Save</button>
       </form>
 
       <button onClick={deleteObject}>Delete object</button>
