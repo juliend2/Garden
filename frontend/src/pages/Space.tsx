@@ -21,6 +21,7 @@ interface TextObjectProps {
   id: string;
   text: string;
   color?: string;
+  textColor?: string;
 }
 
 export function TextObject(props: TextObjectProps) {
@@ -28,18 +29,18 @@ export function TextObject(props: TextObjectProps) {
   if (props.color) {
     styles.backgroundColor = props.color
   }
+  if (props.textColor) {
+    styles.color = props.textColor
+  }
   return <Link className='object object--text' style={styles} to={`/object/${props.id}`}>{props.text}</Link>
 }
 
 function objectComponentFactory(object: Obj) {
-  if ('text' in object) {
-    if ('color' in object) {
-      return <TextObject id={object._id} text={object.text as string} color={object.color as string} />
-    } else {
-      return <TextObject id={object._id} text={object.text as string} />
-    }
+  if (!('text' in object)) {
+    return <></>
   }
-  return <></>
+  const { _id, ...props } = { id: object._id, ...object }
+  return <TextObject {...props} />
 }
 
 function SortableObject({ obj }: { obj: Obj }) {
@@ -64,14 +65,18 @@ function SortableObject({ obj }: { obj: Obj }) {
 }
 
 export default function Space() {
-  const { id }       = useParams<{ id: string }>()
-  const navigate     = useNavigate()
+  const DEFAULT_BACKGROUND_COLOR = '#ffffff'
+  const DEFAULT_TEXT_COLOR = '#000000'
+  const { id }     = useParams<{ id: string }>()
+  const navigate   = useNavigate()
   const [space, setSpace]   = useState<SpaceType | null>(null)
   const [objects, setObjects] = useState<Obj[]>([])
-  const [text, setText]     = useState('')
-  const [color, setColor]   = useState('#ffffff')
-  const [url, setUrl]       = useState('')
-  const [error, setError]   = useState('')
+  const [obj, setObj]     = useState<Obj | null>(null)
+  const [text, setText]   = useState('')
+  const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR)
+  const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR)
+  const [url, setUrl]     = useState('')
+  const [error, setError] = useState('')
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }))
 
@@ -85,10 +90,11 @@ export default function Space() {
     e.preventDefault()
     if (!id) return
     try {
-      const obj = await api.spaces.createObject(id, { text, color, url })
+      const obj = await api.spaces.createObject(id, { text, color, url, textColor })
       setObjects(prev => [...prev, obj])
       setText('')
-      setColor('#ffffff')
+      setColor(DEFAULT_BACKGROUND_COLOR)
+      setTextColor(DEFAULT_TEXT_COLOR)
       setUrl('')
       setError('')
     } catch (e: unknown) {
@@ -139,7 +145,6 @@ export default function Space() {
             cols={50}
           />
         </label>
-        <br />
         <label>
           <span className='field-label'>Color</span>
           <input
@@ -148,7 +153,25 @@ export default function Space() {
             onChange={e => setColor(e.target.value)}
           />
         </label>
-        <br />
+        <div className='field'>
+          <span className='field-label'>Text Color</span>
+          <label>
+            <input
+              type="radio"
+              value="#000000"
+              checked={textColor === '#000000'}
+              onChange={e => setTextColor(e.target.value)}
+            />Black
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="#ffffff"
+              checked={textColor === '#ffffff'}
+              onChange={e => setTextColor(e.target.value)}
+            />White
+          </label>
+        </div>
         <label>
           <span className='field-label'>URL</span>
           <input
@@ -157,7 +180,6 @@ export default function Space() {
             onChange={e => setUrl(e.target.value)}
           />
         </label>
-        <br />
         <button type="submit" className='form-button'>Create</button>
       </form>
 

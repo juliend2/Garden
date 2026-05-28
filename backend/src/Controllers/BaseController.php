@@ -6,6 +6,13 @@ use App\Response;
 
 abstract class BaseController
 {
+    const FIELDS = [
+      'text' => 1048576,
+      'color' => 100,
+      'textColor' => 100,
+      'url' => 1024
+    ];
+
     protected function requireAuth(): ?string
     {
         if (empty($_SESSION['user_id'])) {
@@ -22,7 +29,7 @@ abstract class BaseController
 
     protected function validateObjectFields(array $body): ?array
     {
-        $limits = ['text' => 1048576, 'color' => 100, 'url' => 1024];
+        $limits = self::FIELDS;
         $out = [];
         foreach ($limits as $key => $max) {
             if (!array_key_exists($key, $body)) continue;

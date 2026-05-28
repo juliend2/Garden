@@ -10,7 +10,7 @@ use App\Controllers\ObjectsController;
 session_start();
 
 $dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
-    $r->addRoute('GET',    '/api/auth/login',          [AuthController::class,   'login']);
+    $r->addRoute('GET',    '/api/auth/login',           [AuthController::class,   'login']);
     $r->addRoute('GET',    '/api/auth/callback',        [AuthController::class,   'callback']);
     $r->addRoute('POST',   '/api/auth/logout',          [AuthController::class,   'logout']);
     $r->addRoute('GET',    '/api/auth/me',              [AuthController::class,   'me']);

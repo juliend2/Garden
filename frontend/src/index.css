@@ -26,6 +26,7 @@ body {
   display: block;
   margin-top: .5rem;
 }
+.field:first-child > .field-label,
 label:first-child > .field-label {
   margin-top: 0;
 }

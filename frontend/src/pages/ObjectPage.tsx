@@ -3,11 +3,14 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api, type Obj } from '../api'
 
 export default function ObjectPage() {
+  const DEFAULT_BACKGROUND_COLOR = '#ffffff'
+  const DEFAULT_TEXT_COLOR = '#000000'
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
   const [obj, setObj]     = useState<Obj | null>(null)
   const [text, setText]   = useState('')
-  const [color, setColor] = useState('#ffffff')
+  const [color, setColor] = useState(DEFAULT_BACKGROUND_COLOR)
+  const [textColor, setTextColor] = useState(DEFAULT_TEXT_COLOR)
   const [url, setUrl]     = useState('')
   const [error, setError] = useState('')
 
@@ -16,7 +19,8 @@ export default function ObjectPage() {
     api.objects.get(id).then(o => {
       setObj(o)
       setText(typeof o.text === 'string' ? o.text : '')
-      setColor(typeof o.color === 'string' && o.color ? o.color : '#ffffff')
+      setColor(typeof o.color === 'string' && o.color ? o.color : DEFAULT_BACKGROUND_COLOR)
+      setTextColor(typeof o.textColor === 'string' && o.textColor ? o.textColor : DEFAULT_TEXT_COLOR)
       setUrl(typeof o.url === 'string' ? o.url : '')
     })
   }, [id])
@@ -61,7 +65,6 @@ export default function ObjectPage() {
             cols={50}
           />
         </label>
-        <br />
         <label>
           <span className='field-label'>Color</span>
           <input
@@ -70,7 +73,25 @@ export default function ObjectPage() {
             onChange={e => setColor(e.target.value)}
           />
         </label>
-        <br />
+        <div className='field'>
+          <span className='field-label'>Text Color</span>
+          <label>
+            <input
+              type="radio"
+              value="#000000"
+              checked={textColor === '#000000'}
+              onChange={e => setTextColor(e.target.value)}
+            />Black
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="#ffffff"
+              checked={textColor === '#ffffff'}
+              onChange={e => setTextColor(e.target.value)}
+            />White
+          </label>
+        </div>
         <label>
           <span className='field-label'>URL</span>
           <input
@@ -79,7 +100,6 @@ export default function ObjectPage() {
             onChange={e => setUrl(e.target.value)}
           />
         </label>
-        <br />
         <button type="submit" className='form-button' >Save</button>
       </form>
 
