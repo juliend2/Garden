@@ -3,8 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api, type Obj } from '../api'
 
 export default function ObjectPage() {
-  const DEFAULT_BACKGROUND_COLOR = '#ffffff'
-  const DEFAULT_TEXT_COLOR = '#000000'
+  const WHITE = '#ffffff'
+  const BLACK = '#000000'
+  const DEFAULT_BACKGROUND_COLOR = WHITE
+  const DEFAULT_TEXT_COLOR = BLACK
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
   const [obj, setObj]     = useState<Obj | null>(null)
@@ -32,6 +34,8 @@ export default function ObjectPage() {
       const updated = await api.objects.update(id, { text, color, url })
       setObj(updated)
       setError('')
+      console.log('yo', id)
+      navigate(`/space/${obj.spaceId}`)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Error')
     }
@@ -78,16 +82,16 @@ export default function ObjectPage() {
           <label>
             <input
               type="radio"
-              value="#000000"
-              checked={textColor === '#000000'}
+              value={BLACK}
+              checked={textColor === BLACK}
               onChange={e => setTextColor(e.target.value)}
             />Black
           </label>
           <label>
             <input
               type="radio"
-              value="#ffffff"
-              checked={textColor === '#ffffff'}
+              value={WHITE}
+              checked={textColor === BLACK}
               onChange={e => setTextColor(e.target.value)}
             />White
           </label>

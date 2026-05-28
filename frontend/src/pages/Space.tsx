@@ -22,6 +22,7 @@ interface TextObjectProps {
   text: string;
   color?: string;
   textColor?: string;
+  url?: string;
 }
 
 export function TextObject(props: TextObjectProps) {
@@ -32,7 +33,8 @@ export function TextObject(props: TextObjectProps) {
   if (props.textColor) {
     styles.color = props.textColor
   }
-  return <Link className='object object--text' style={styles} to={`/object/${props.id}`}>{props.text}</Link>
+  const to = ('url' in props && props.url != '') ? props.url : `/object/${props.id}`
+  return <Link className='object object--text' style={styles} to={to}>{props.text}</Link>
 }
 
 function objectComponentFactory(object: Obj) {
@@ -65,8 +67,10 @@ function SortableObject({ obj }: { obj: Obj }) {
 }
 
 export default function Space() {
-  const DEFAULT_BACKGROUND_COLOR = '#ffffff'
-  const DEFAULT_TEXT_COLOR = '#000000'
+  const WHITE = '#ffffff'
+  const BLACK = '#000000'
+  const DEFAULT_BACKGROUND_COLOR = WHITE
+  const DEFAULT_TEXT_COLOR = BLACK
   const { id }     = useParams<{ id: string }>()
   const navigate   = useNavigate()
   const [space, setSpace]   = useState<SpaceType | null>(null)
@@ -158,16 +162,16 @@ export default function Space() {
           <label>
             <input
               type="radio"
-              value="#000000"
-              checked={textColor === '#000000'}
+              value={BLACK}
+              checked={textColor === BLACK}
               onChange={e => setTextColor(e.target.value)}
             />Black
           </label>
           <label>
             <input
               type="radio"
-              value="#ffffff"
-              checked={textColor === '#ffffff'}
+              value={WHITE}
+              checked={textColor === WHITE}
               onChange={e => setTextColor(e.target.value)}
             />White
           </label>
