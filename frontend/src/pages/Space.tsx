@@ -56,12 +56,17 @@ function SortableObject({ obj }: { obj: Obj }) {
   return (
     <div ref={setNodeRef} style={style}>
       <div className="object__tools">
+        {'url' in obj && obj.url != '' &&
+          <span className="object__tool">
+            <span className="object__tool__inner--link">🔗</span>
+          </span>
+        }
         <Link
           to={`/object/${obj._id}`}
-          className="object__tool  object__edit"
+          className="object__tool  object--edit"
         >Edit</Link>
         <span
-          className="object__tool  object__handle"
+          className="object__tool  object--handle"
           {...attributes}
           {...listeners}
           aria-label="Drag to reorder"

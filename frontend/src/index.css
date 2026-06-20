@@ -138,11 +138,16 @@ label:first-child > .field-label {
   margin-left: .25rem;
 }
 
-.object__handle {
+.object--link {
+}
+.object__tool__inner--link {
+  padding-top: .2rem;
+}
+.object--handle {
   cursor: grab;
   user-select: none;
   z-index: 1;
 }
-.object__handle:active {
+.object--handle:active {
   cursor: grabbing;
 }
