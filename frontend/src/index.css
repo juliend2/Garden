@@ -2,6 +2,19 @@
   box-sizing: border-box;
 }
 
+html {
+  font: 16px/1.2 sans-serif;
+}
+@media (min-width: 1024px) { 
+  html {
+    font: 12px/1.2 sans-serif;
+  }
+}
+/* adjust form field elements */
+input, textarea {
+  font-size: 1rem;
+}
+
 body {
   margin: 0;
   font-family: sans-serif;
@@ -53,6 +66,13 @@ body {
 .form-button {
   display: block;
   margin-top: .5rem;
+  font-size: 1.3rem;
+}
+.field-label {
+  line-height: 150%;
+}
+textarea {
+  max-width: 100%;
 }
 .inline-block * {
   display: inline-block;
@@ -101,6 +121,7 @@ label:first-child > .field-label {
 .object__tools {
   float: right;
   padding: .25rem;
+  font-size: 1.5rem;
   /*
   position: absolute;
   top: 0.25rem;
@@ -114,7 +135,6 @@ label:first-child > .field-label {
   line-height: 1;
   color: #555;
   font-family: courier;
-  font-size: 0.9rem;
   margin-left: .25rem;
 }
 
